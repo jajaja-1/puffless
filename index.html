@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Counter</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            color: #01579b;
+        }
+
+        #counter {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0277bd;
+        }
+
+        #limit-input {
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 1em;
+        }
+
+        #limit-message {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: red;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        #close-modal {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #close-modal:hover {
+            background-color: #0277bd;
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">0</div>
+    <input id="limit-input" type="number" placeholder="Enter click limit" />
+    <div id="limit-message"></div>
+    <button id="click-button">Click Me</button>
+
+    <div id="modal-overlay"></div>
+    <div id="modal">
+        <p>Разработка ведется для мобильного устройства</p>
+        <button id="close-modal">Закрыть</button>
+    </div>
+
+    <script>
+        let count = 0;
+        let limit = null;
+
+        // Получение значения счётчика из localStorage при загрузке страницы
+        function fetchCounter() {
+            const savedCount = localStorage.getItem('counter');
+            if (savedCount !== null) {
+                count = parseInt(savedCount, 10);
+                document.getElementById('counter').textContent = count;
+            } else {
+                count = 0;
+                document.getElementById('counter').textContent = count;
+            }
+        }
+
+        // Функция для увеличения счётчика
+        function incrementCounter() {
+            count += 1;
+            localStorage.setItem('counter', count); // Сохраняем обновленное значение счётчика в localStorage
+            document.getElementById('counter').textContent = count;
+
+            if (limit !== null && count > limit) {
+                showModal();
+            }
+        }
+
+        // Показ модального окна
+        function showModal() {
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        // Закрытие модального окна
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Обработчик ввода лимита
+        document.getElementById('limit-input').addEventListener('input', (event) => {
+            const value = parseInt(event.target.value, 10);
+            if (!isNaN(value) && value > 0) {
+                limit = value;
+                document.getElementById('limit-message').textContent = '';
+            }
+        });
+
+        // Обработчик клика по кнопке
+        document.getElementById('click-button').addEventListener('click', incrementCounter);
+
+        // Обработчик закрытия модального окна
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+
+        // Загрузка счётчика из localStorage при старте
+        fetchCounter();
+    </script>
+</body>
+</html>
